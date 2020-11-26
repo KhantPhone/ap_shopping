@@ -23,11 +23,12 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <h3 class="card-title">Bordered Table</h3>
+                <h3 class="card-title">Order Listings</h3>
+                
               </div>
               <!-- /.card-header -->
               <div class="card-body">
-                 <?php 
+                <?php 
                   if (!empty($_GET['pageno'])) {
                    $pageno = $_GET['pageno'];
                   }else{
@@ -35,59 +36,60 @@
                   }
                   $numofrecs = 5;
                   $offset = ($pageno -1 ) * $numofrecs ;
-                 
 
-                 if (empty($_POST['search'])) {
-                  $stmt = $pdo->prepare("SELECT * FROM posts ORDER BY id DESC");
+
+                  $stmt = $pdo->prepare("SELECT * FROM sale_orders_details WHERE sale_orders_id = " . $_GET['id']);
                   $stmt->execute();
                   $rawResult = $stmt->fetchAll();
+
                   $total_pages = ceil(count($rawResult) / $numofrecs);
 
                  
-                  $stmt = $pdo->prepare("SELECT * FROM posts  ORDER BY id DESC LIMIT $offset,$numofrecs ");
+                  $stmt = $pdo->prepare("SELECT * FROM sale_orders_details WHERE sale_orders_id = " . $_GET['id'] . " ORDER BY id DESC LIMIT $offset,$numofrecs ");
                   $stmt->execute();
                   $result = $stmt->fetchAll();
-                 }else{
-                  $searchKey = $_POST['search'];
-                  $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC");
-                  $stmt->execute();
-                  $rawResult = $stmt->fetchAll();                 
-                  $total_pages = ceil(count($rawResult) / $numofrecs); 
 
-                  $stmt = $pdo->prepare("SELECT * FROM posts WHERE title LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofrecs ");
-                  $stmt->execute();
-                  $result = $stmt->fetchAll();
-                 }
-
+                 
                  ?>
-                <a href="add.php" class="btn btn-success mb-3">New Blog Post</a>
+                 
+                
                 
                 <table class="table table-bordered">
                   <thead>                  
                     <tr>
                       <th style="width: 10px">#</th>
-                      <th>Title</th>
-                      <th>Description</th>
-                      <th style="width: 40px">Actions</th>
+                      <th>Product</th>
+                      <th>Quantity</th>
+                      <th>Order Date</th>
+                      
                     </tr>
                   </thead>
                   <tbody>
-                     <?php 
-
+                    <?php 
                         if ($result) {
                           $i = 1;
                           foreach ($result as $value) { ?>
-                           <tr>
-                      <td><?php echo $i; ?></td>
-                      <td><?php echo escape($value['title'])?></td>
+                            <?php 
+                        $pstmt = $pdo->prepare("SELECT * FROM products WHERE id = " . $value['product_id']);
+                        $pstmt->execute();
+                        $presult = $pstmt->fetchAll();
+
+                        ?>
+                      <tr>
                       <td>
-                      <?php echo substr( escape($value['content']),0,50);?>
+                        <?php echo $i; ?>
                       </td>
-                      <td class="d-flex flex-row">
-                        <a href="edit.php?id=<?php echo $value['id'] ?>" class="btn btn-outline-warning mr-3">Edit</a>
-                        <a href="delete.php?id=<?php echo $value['id'] ?>" 
-                          onClick = "return confirm('Are u sure to delete this item ?')"
-                          class="btn btn-outline-danger">Delete</a>
+                      <td>
+                        <?php foreach ($presult as $pvalue) { ?>
+                          <?php echo $pvalue['name']; ?>
+                        <?php } ?>
+                        
+                      </td>
+                      <td>
+                        <?php echo escape($value['quantity']) ?>
+                      </td>
+                      <td>
+                        <?php echo $value['order_date']; ?>
                       </td>
                     </tr>                   
                                            
@@ -99,6 +101,9 @@
                     
                   </tbody>
                 </table>
+                <a href="order_list.php">                  
+                <button class="btn btn-danger btn-block mt-4">Back</button>
+                </a>
               </div>
               <!-- /.card-body -->
               <nav>
@@ -114,8 +119,7 @@
                   </li>
                   <li class="page-item"><a class="page-link" href="?pageno=<?php echo $total_pages ?>">Last</a></li>
                 </ul>
-              </nav>
-             
+              </nav>           
             </div>
             <!-- /.card -->
 

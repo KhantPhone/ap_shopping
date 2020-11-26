@@ -24,10 +24,12 @@
         $description = $_POST['description'];
         $id = $_POST['id'];
 
-        $stmt = $pdo->prepare("UPDATE categories SET name = :name , description = :description  where id = '$id' " );
+        $stmt = $pdo->prepare("UPDATE categories SET name = :name , description = :description  WHERE id = '$id' " );
         $result = $stmt->execute(
           array(':name' => $name,':description' => $description)
         );
+         print_r($result);  
+         exit();  
       }
       if (!empty($result)) {
        
