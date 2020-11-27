@@ -25,6 +25,8 @@
         }
               }
       else{
+        echo "1";
+        exit();
       $name = $_POST['name'];
       $email = $_POST['email'];
       $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
@@ -54,10 +56,8 @@
       }
       }
 
-       }
-       
-  
-  }
+       }    
+    }
  ?>
  <?php 
      require_once 'header.php';
