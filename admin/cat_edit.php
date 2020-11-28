@@ -28,8 +28,7 @@
         $result = $stmt->execute(
           array(':name' => $name,':description' => $description)
         );
-         print_r($result);  
-         exit();  
+          
       }
       if (!empty($result)) {
        

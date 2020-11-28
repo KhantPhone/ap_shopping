@@ -1,3 +1,9 @@
+<?php 
+	require_once 'config/common.php';
+	require_once 'config/config.php';
+ ?>
+
+
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
 
@@ -58,9 +64,10 @@
 		</div>
 		<div class="search_input" id="search_input_box">
 			<div class="container">
-				<form class="d-flex justify-content-between">
-					<input type="text" class="form-control" id="search_input" placeholder="Search Here">
-					<button type="submit" class="btn"></button>
+				<form class="d-flex justify-content-between" method="post" action="index.php">
+					<input type="text" class="form-control" id="search_input" placeholder="Search Here" name="search">
+					<input type="hidden" name= "_token" value="<?php echo $_SESSION['_token']?>" >
+					<button type="submit" sclas="btn"></button>
 					<span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
 				</form>
 			</div>
@@ -84,24 +91,5 @@
 		</div>
 	</section>
 	<!-- End Banner Area -->
-	<div class="container">
-		<div class="row">
-			<div class="col-xl-3 col-lg-4 col-md-5">
-				<div class="sidebar-categories">
-					<div class="head">Browse Categories</div>
-					<ul class="main-categories">
-						<li class="main-nav-list"><a data-toggle="collapse" href="#fruitsVegetable" aria-expanded="false" aria-controls="fruitsVegetable"><span
-								 class="lnr lnr-arrow-right"></span>Fruits and Vegetables<span class="number">(53)</span></a>
-							<ul class="collapse" id="fruitsVegetable" data-toggle="collapse" aria-expanded="false" aria-controls="fruitsVegetable">
-								<li class="main-nav-list child"><a href="#">Frozen Fish<span class="number">(13)</span></a></li>
-								<li class="main-nav-list child"><a href="#">Dried Fish<span class="number">(09)</span></a></li>
-								<li class="main-nav-list child"><a href="#">Fresh Fish<span class="number">(17)</span></a></li>
-								<li class="main-nav-list child"><a href="#">Meat Alternatives<span class="number">(01)</span></a></li>
-								<li class="main-nav-list child"><a href="#">Meat<span class="number">(11)</span></a></li>
-							</ul>
-						</li>						
-					</ul>
-				</div>				
-			</div>
-			<div class="col-xl-9 col-lg-8 col-md-7">
 				<!-- Start Filter Bar -->
+				
