@@ -10,48 +10,48 @@
     header('Location:login.php');
   }
   if ($_POST) {    
+
       
       if (empty($_POST['name']) || empty($_POST['description']) || empty($_POST['category'])
           || empty($_POST['quantity']) || empty($_POST['price']) || empty($_FILES['image'])) {
 
         if (empty($_POST['name'])) {
            $nameError =  "Category name cannot be empty!";
-                   echo "1 ";exit();
+                
 
         }
         if (empty($_POST['description'])) {
            $descError = "Description cannot be empty!";
-                              echo "2 ";exit();
+                             
 
         }
         if (empty($_POST['category'])) {
            $catError = "Category cannot be empty!";
-                              echo "3 ";exit();
+                              
 
         }
         if (empty($_POST['quantity'])) {
            $qtyError = "Quantity cannot be empty!";
-                              echo "4 ";exit();
+                             
 
         }       
           elseif ($_POST['quantity'] && (is_numeric($_POST['quantity']) != 1)){
            $qtyError = "Qunatity should be integer!";       
-                              echo "5 ";exit();
+                           
    
         }
         if (empty($_POST['price'])) {
            $priceError = "Price cannot be empty!";
-                              echo "6 ";exit();
+                          
 
         }        
           elseif ($_POST['price'] && (is_numeric($_POST['price']) != 1)){
            $qtyError = "Price should be integer!";  
-                              echo "7 ";exit();
+                              
          
         }
         if (empty($_FILES['image'])) {
-           $imageError = "Image cannot be empty!";
-                              echo "8 ";exit();
+           $imageError = "Image cannot be empty!";            
 
         }
        }   
@@ -60,7 +60,7 @@
         $file = 'images/'.($_FILES['image']['name']);
         $imageType = pathinfo($file,PATHINFO_EXTENSION);
 
-        if ($imageType !== 'jpg' && $imageType !== 'jpeg' && $imageType = 'png') {
+        if ($imageType !='jpg' && $imageType != 'jpeg' && $imageType != 'png') {
           echo "<script>alert('Image should be png or jpg or jpeg');</script>";
         }
         else{
@@ -141,7 +141,7 @@
                      <p class="text-danger mt-3 font-weight-bold"><?php echo empty($priceError) ? '' : $priceError; ?></p>
                   </div> 
                   <div class="form-group">                   
-                     <label for="image">Image</label>
+                     <label for="image" class="d-flex">Image</label>
                      <input type="file"  name="image" id="image">
                      <p class="text-danger mt-3 font-weight-bold"><?php echo empty($imageError) ? '' : $imageError; ?></p>
                   </div>                  

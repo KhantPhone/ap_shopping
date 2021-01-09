@@ -5,11 +5,13 @@
 
  	?>
  		    <?php 
+ 		    	if (empty($_SESSION['user_id'])) {
+ 		    		header('Location:login.php');
+ 		    	}
 
  		        if (session_status() == PHP_SESSION_NONE) {
  		        	session_start();
- 		        }
- 		         
+ 		        } 		         
                   if (!empty($_GET['pageno'])) {
                    $pageno = $_GET['pageno'];
                   }else{
@@ -17,29 +19,44 @@
                   }	
                   $numofrecs = 6;
                   $offset = ($pageno -1 ) * $numofrecs ;
-                 
 
-                 if (empty($_POST['search'])) {
-                  $stmt = $pdo->prepare("SELECT * FROM products ORDER BY id DESC");
+                  if (empty($_POST['search'])) {
+
+                  $stmt = $pdo->prepare("SELECT * FROM products WHERE quantity > 0 ORDER BY id DESC");
                   $stmt->execute();
                   $rawResult = $stmt->fetchAll();
                   $total_pages = ceil(count($rawResult) / $numofrecs);
 
                  
-                  $stmt = $pdo->prepare("SELECT * FROM products  ORDER BY id DESC LIMIT $offset,$numofrecs ");
+                  $stmt = $pdo->prepare("SELECT * FROM products WHERE quantity > 0 ORDER BY id DESC LIMIT $offset,$numofrecs ");
                   $stmt->execute();
                   $result = $stmt->fetchAll();
-                 }else{
+                 }                         
+                
+                 else{
                   $searchKey = $_POST['search'];
-                  $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC");
+                  $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' AND quantity > 0 ORDER BY id DESC");
                   $stmt->execute();
                   $rawResult = $stmt->fetchAll();                 
                   $total_pages = ceil(count($rawResult) / $numofrecs); 
 
-                  $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' ORDER BY id DESC LIMIT $offset,$numofrecs ");
+                  $stmt = $pdo->prepare("SELECT * FROM products WHERE name LIKE '%$searchKey%' AND quantity > 0 ORDER BY id DESC LIMIT $offset,$numofrecs ");
                   $stmt->execute();
                   $result = $stmt->fetchAll();
                  }
+                 if (!empty($_GET['category_id']))
+                   {               
+                  $stmt = $pdo->prepare("SELECT * FROM products WHERE category_id = " .$_GET['category_id'
+              			 ] . " AND quantity > 0 ");
+                  $stmt->execute();
+                  $rawResult = $stmt->fetchAll();
+                  $total_pages = ceil(count($rawResult) / $numofrecs);
+
+                 
+                  $stmt = $pdo->prepare("SELECT * FROM products  WHERE category_id = " .$_GET['category_id'] . "AND quantity > 0 ORDER BY id DESC  LIMIT $offset,$numofrecs ");
+                  $stmt->execute();
+                  $result = $stmt->fetchAll();
+                 }   
 
                  ?>
 
@@ -57,8 +74,9 @@
 								 ?>
 								 <?php 
 								 	foreach ($catresult  as $catvalue) { ?>
-								    <a data-toggle="collapse" href="#" aria-expanded="false" aria-controls="fruitsVegetable">
-							        <span class="lnr lnr-arrow-right"></span><?php echo escape($catvalue['name']) ?></a>
+								    <a href="index.php?category_id=<?php echo escape($catvalue['id']) ?>">
+								    	<?php echo escape($catvalue['name']); ?>
+								    </a>
 								 <?php		
 								 	}
 								  ?>
@@ -91,8 +109,10 @@
 								foreach ($result as $key => $value) {  ?>
 							<div class="col-lg-4 col-md-6 col-sm-12">
 								<div class="single-product">
+								<a href="product_detail.php?id=<?php echo $value['id'] ?>">	
 								<img class="img-fluid" src="admin/images/<?php echo
 								escape($value['image']) ?>" alt="" style="height: 35vh;">
+								</a>								
 								<div class="product-details ">
 									<h6><?php echo escape($value['name']) ?></h6>
 									<div class="price">
@@ -100,14 +120,22 @@
 										
 									</div>
 									<div class="prd-bottom">
-										<a href="" class="social-info">
-											<span class="ti-bag"></span>
-											<p class="hover-text">add to bag</p>
-										</a>										
-										<a href="" class="social-info">
-											<span class="lnr lnr-move"></span>
-											<p class="hover-text">view more</p>
-										</a>
+										<form action="addtocart.php" method="post">
+											<input type="hidden" name="_token" value="<?php echo $_SESSION['_token'];?>">
+											<input type="hidden" name="id" value="<?php echo escape($value['id']) ?>">
+											<input type="hidden" name="qty" value="1">
+											<button type="submit" style="display: contents;">
+												<a href="" class="social-info">
+													<span class="ti-bag"></span>
+													<p class="hover-text">add to bag</p>
+												</a>
+												<a href="product_detail.php?id=<?php echo $value['id'] ?>" class="social-info">
+												<span class="lnr lnr-move"></span>
+												<p class="hover-text">view more</p>
+												</a>	
+											</button>
+										</form>															
+										
 									</div>
 								</div>
 							</div>

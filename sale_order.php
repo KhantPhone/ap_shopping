@@ -1,3 +1,59 @@
+<?php 
+		
+		require_once 'config/common.php';
+		require_once 'config/config.php';
+
+		if (!empty($_SESSION['cart'])) {
+			$user_id = $_SESSION['user_id'];
+			$total = 0;
+
+			foreach ($_SESSION['cart'] as $key => $qty) {
+				$id = str_replace('id', '' ,  $key );
+				$stmt = $pdo -> prepare("SELECT * FROM products WHERE id = ".$id);
+				$stmt ->execute();
+				$result  = $stmt->fetch(PDO::FETCH_ASSOC);			
+				$total += $result['price'] * $qty;
+
+				//insert into sale_orders table 
+				$stmt = $pdo -> prepare("INSERT INTO sale_orders (user_id,total_price,order_date) VALUES 
+					   (:user_id,:total_price,:order_date)");
+				$result = $stmt -> execute(
+				array(':user_id' => $user_id , ':total_price' => $total , ':order_date' => date('Y-m-d H:i:s')));
+			if ($result) {
+				//insert into sale_orders_details table
+				$saleOrderId = $pdo->lastInsertId();
+				foreach ($_SESSION['cart'] as $key => $qty) {
+						$id = str_replace('id','',$key);
+						$stmt = $pdo -> prepare("INSERT INTO sale_orders_details (
+								sale_orders_id,product_id,quantity,order_date)	 
+					    		VALUES (:sid,:pid,:qty,:order_date)");
+						$result = $stmt -> execute(
+								array(':sid' => $saleOrderId , ':pid' => $id ,':qty' => $qty ,':order_date' => date('Y-m-d H:i:s')));
+
+				$qtyStmt = $pdo -> prepare("SELECT quantity FROM products WHERE id =".$id);
+				$qtyStmt->execute();
+				$qtyResult = $qtyStmt->fetch(PDO::FETCH_ASSOC);
+
+				//removing quantity that has been bought
+				$updateQty = $qtyResult['quantity'] - $qty ;
+				//inserting new quantity after bought
+				$stmt = $pdo->prepare("UPDATE products SET quantity =:qty WHERE id =".$id);
+				$result = $stmt->execute(
+						 array(':qty'=>$updateQty));		
+
+			}
+
+			}
+
+		}
+		unset($_SESSION['cart']);
+			}
+
+	
+
+ ?>
+
+
 <!DOCTYPE html>
 <html lang="zxx" class="no-js">
 
@@ -87,32 +143,16 @@
 	<section class="order_details section_gap">
 		<div class="container">
 			<h3 class="title_confirmation">Thank you. Your order has been received.</h3>
+			<a href="index.php">
+				<button class="btn btn-outline-success btn-block">OK</button>
+			</a>
 			<div class="row order_d_inner">
-				<div class="col-lg-6">
-					<div class="details_item">
-						<h4>Order Info</h4>
-						<ul class="list">
-							<li><a href="#"><span>Order number</span> : 60235</a></li>
-							<li><a href="#"><span>Date</span> : Los Angeles</a></li>
-							<li><a href="#"><span>Total</span> : USD 2210</a></li>
-							<li><a href="#"><span>Payment method</span> : Check payments</a></li>
-						</ul>
-					</div>
-				</div>				
-				<div class="col-lg-6">
-					<div class="details_item">
-						<h4>Shipping Address</h4>
-						<ul class="list">
-							<li><a href="#"><span>Street</span> : 56/8</a></li>
-							<li><a href="#"><span>City</span> : Los Angeles</a></li>
-							<li><a href="#"><span>Country</span> : United States</a></li>
-							<li><a href="#"><span>Postcode </span> : 36952</a></li>
-						</ul>
-					</div>
-				</div>
+				
 			</div>		
 		</div>
+
 	</section>
+
 	<!--================End Order Details Area =================-->
 
 	<!-- start footer Area -->

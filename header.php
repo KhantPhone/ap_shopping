@@ -1,6 +1,8 @@
 <?php 
+	
 	require_once 'config/common.php';
 	require_once 'config/config.php';
+
  ?>
 
 
@@ -51,9 +53,18 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
+					<?php 
+						$cart = 0 ;
+						if (isset($_SESSION['cart'])) {
+							foreach ($_SESSION['cart'] as $key => $qty) {
+							$cart += $qty;							
+						}						
+						}
+
+					 ?>
 					<!-- Collect the nav links, forms, and other content for toggling -->
-					<div class="collapse navbar-collapse offset" id="navbarSupportedContent">				<ul class="nav navbar-nav navbar-right ml-auto">
-							<li class="nav-item"><a href="#" class="cart"><span class="ti-bag"></span></a></li>
+					<div class="collapse navbar-collapse offset" id="navbarSupportedContent">			<ul class="nav navbar-nav navbar-right ml-auto">
+							<li class="nav-item"><a href="cart.php" class="cart"><?php echo $cart; ?><span class="ti-bag"></span></a></li>
 							<li class="nav-item">
 								<button class="search"><span class="lnr lnr-magnifier" id="search"></span></button>
 							</li>
@@ -67,7 +78,7 @@
 				<form class="d-flex justify-content-between" method="post" action="index.php">
 					<input type="text" class="form-control" id="search_input" placeholder="Search Here" name="search">
 					<input type="hidden" name= "_token" value="<?php echo $_SESSION['_token']?>" >
-					<button type="submit" sclas="btn"></button>
+					<button type="submit" class="btn"></button>
 					<span class="lnr lnr-cross" id="close_search" title="Close Search"></span>
 				</form>
 			</div>

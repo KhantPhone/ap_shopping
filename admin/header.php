@@ -42,6 +42,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
     $page = end($link_array);
 
      ?>
+     <?php if ($page == 'index.php' || $page = 'category.php' || $page == 'users.php') {
+      ?>
     <?php if($page != 'order_list.php' && $page != 'order_detail.php' ) { ?>
     <form class="form-inline ml-3" method="post" 
     <?php   if ($page == 'index.php') :?>
@@ -52,7 +54,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     action = 'users.php';
     <?php endif; ?>
     >
-       <input type="hidden" name="_token" value="<?php echo $_SESSION['_token'] ?>">
+      <input type="hidden" name="_token" value="<?php echo $_SESSION['_token'] ?>">
       <div class="input-group input-group-sm">
         <input name="search" class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
         <div class="input-group-append">
@@ -63,6 +65,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       </div>
     </form>
   <?php } ?>
+   <?php } ?>
     <!-- Right navbar links -->
     
   </nav>

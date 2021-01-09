@@ -18,6 +18,7 @@
 				$_SESSION['user_id'] = $user['id'];
 				$_SESSION['logged_in'] = time();
 				$_SESSION['user_name'] = $user['name'];
+        $_SESSION['role'] = $user['role'];
 
 				header('Location:index.php');
 			}
@@ -63,7 +64,7 @@
         <input type="hidden" name="_token" value="<?php echo $_SESSION['_token'] ?>">
         
         <div class="input-group mb-3">
-          <input type="email" name="email" class="form-control" placeholder="Email">
+          <input type="text" name="email" class="form-control" placeholder="Email">
           <div class="input-group-append">
             <div class="input-group-text">
               <span class="fas fa-envelope"></span>
